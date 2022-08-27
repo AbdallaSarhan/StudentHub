@@ -74,8 +74,17 @@ jobs:
           text: ':white_check_mark: pushed abdallasarhan/springboot-react-fullstack:${{steps.build-number.outputs.BUILD_NUMBER}} to docker hub... https://hub.docker.com/repository/docker/abdallasarhan/springboot-react-fullstack'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Generate deployment package
-        run: zip -r env.EB_DEPLOYMENT_PACKAGE . -x '*.git*'
+      - name: Update and commit app version in docker-compose.yaml
+        run: |
+          BUILD_NUMBER=${{steps.build-number.outputs.BUILD_NUMBER}}
+          echo -e "Current elasticbeanstalk/docker-compose.yaml\n$(cat elasticbeanstalk/docker-compose.yaml)"
+          sed -i -E 's_(abdallasarhan/springboot-react-fullstack:)([^"]*)_\1'${BUILD_NUMBER}'_' elasticbeanstalk/docker-compose.yaml
+          echo -e "Current elasticbeanstalk/docker-compose.yaml\n$(cat elasticbeanstalk/docker-compose.yaml)"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add elasticbeanstalk/docker-compose.yaml
+          git commit -m "new app version: ${BUILD_NUMBER}"
+          git push
 
       - uses: 8398a7/action-slack@v3
         with:
@@ -84,7 +93,6 @@ jobs:
           text: ':elasticbeanstalk: :aws: Deployment started... :grimacing: :crossed_fingers:'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@ebe3476a4ce991d54336935e75e78dd9d86f9408
         with:
