@@ -1,7 +1,21 @@
 import {getAllStudents, deleteStudent} from "./client";
 import {useState, useEffect} from "react";
 import './App.css';
-import {Layout, Menu, Breadcrumb, Table, Empty, Spin, Button, Badge, Tag, Avatar, Popconfirm, Radio} from "antd";
+import {
+    Layout,
+    Menu,
+    Breadcrumb,
+    Table,
+    Empty,
+    Spin,
+    Button,
+    Badge,
+    Tag,
+    Avatar,
+    Popconfirm,
+    Radio,
+    Divider
+} from "antd";
 import {
     DesktopOutlined,
     FileOutlined,
@@ -198,7 +212,12 @@ function App() {
                         {renderStudents()}
                     </div>
                 </Content>
-                <Footer style={{textAlign: 'center'}}>©2022 By Alladba LLC</Footer>
+                <Footer style={{textAlign: 'center'}}>
+                    ©2022 By Alladba LLC
+                    <Divider>
+                        <a href="https://abdallasportfolio.netlify.app" target="_blank" rel="noreferrer">Portfolio</a>
+                    </Divider>
+                </Footer>
             </Layout>
         </Layout>
     )
